@@ -165,7 +165,7 @@ def plist_analysis(src, is_source):
             "permissions": [],
             "inseccon": [],
             "bundle_name": "",
-            "build_version_name": "",
+            "bundle_version_name": "",
             "bundle_url_types": [],
             "bundle_supported_platforms": [],
             "bundle_localizations": []
