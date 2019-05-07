@@ -14,7 +14,6 @@ LABEL \
 ENV DEBIAN_FRONTEND="noninteractive"
 ENV PDFGEN_PKGFILE="wkhtmltox_0.12.5-1.bionic_amd64.deb" 
 ENV PDFGEN_URL="https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/${PDFGEN_PKGFILE}"
-ENV YARA_URL="https://github.com/rednaga/yara-python-1"
 
 #Update the repository sources list
 #Install Required Libs
@@ -81,20 +80,20 @@ ARG POSTGRES=False
 RUN cd scripts && chmod +x postgres_support.sh; sync; ./postgres_support.sh $POSTGRES
 
 #Install apkid dependencies, and enable it 
-RUN git clone --recursive ${YARA_URL} yara-python && \
-    cd yara-python && \
-    python3 setup.py build --enable-dex install && \
-    pip3 install apkid && \
-    cd .. && \
-    rm -fr yara-python && \
+RUN pip install --upgrade pip
+RUN pip install wheel
+RUN pip wheel --wheel-dir=/tmp/yara-python --build-option="build" --build-option="--enable-dex" git+https://github.com/VirusTotal/yara-python.git@v3.10.0 ;
+RUN pip install --no-index --find-links=/tmp/yara-python yara-python
+RUN rm -rf /tmp/yara-python
+RUN pip3 install apkid && \
     sed -i 's/APKID_ENABLED.*/APKID_ENABLED = True/' /root/Mobile-Security-Framework-MobSF/MobSF/settings.py
-
 #update apkid rules
 RUN git clone https://github.com/rednaga/APKiD.git && \
     cd APKiD && \
     python3 prep-release.py && \
     cp apkid/rules/rules.yarc /root/Mobile-Security-Framework-MobSF/MalwareAnalyzer/ && \
-    sed -i 's#RULES_DIR =.*#RULES_DIR =  "/root/Mobile-Security-Framework-MobSF/MalwareAnalyzer"#' /usr/local/lib/python3.6/dist-packages/apkid/rules.py && \
+    sed -i 's#rules_dir = os.path.*#rules_dir =  "/root/Mobile-Security-Framework-MobSF/MalwareAnalyzer"#' /usr/local/lib/python3.6/dist-packages/apkid/rules.py && \
+    #sed -i 's#RULES_DIR =.*#RULES_DIR =  "/root/Mobile-Security-Framework-MobSF/MalwareAnalyzer"#' /usr/local/lib/python3.6/dist-packages/apkid/rules.py && \
     cd .. && \
     rm -fr APKiD
 
