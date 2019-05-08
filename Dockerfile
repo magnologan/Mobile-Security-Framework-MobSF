@@ -79,7 +79,7 @@ ARG POSTGRES=False
 #check if Postgres support needs to be enabled 
 RUN cd scripts && chmod +x postgres_support.sh; sync; ./postgres_support.sh $POSTGRES
 
-#Install apkid dependencies, and enable it 
+#Install apkid 2.0.x and dependencies, then enable it 
 RUN pip install --upgrade pip
 RUN pip install wheel
 RUN pip wheel --wheel-dir=/tmp/yara-python --build-option="build" --build-option="--enable-dex" git+https://github.com/VirusTotal/yara-python.git@v3.10.0 ;
@@ -93,7 +93,6 @@ RUN git clone https://github.com/rednaga/APKiD.git && \
     python3 prep-release.py && \
     cp apkid/rules/rules.yarc /root/Mobile-Security-Framework-MobSF/MalwareAnalyzer/ && \
     sed -i 's#rules_dir = os.path.*#rules_dir =  "/root/Mobile-Security-Framework-MobSF/MalwareAnalyzer"#' /usr/local/lib/python3.6/dist-packages/apkid/rules.py && \
-    #sed -i 's#RULES_DIR =.*#RULES_DIR =  "/root/Mobile-Security-Framework-MobSF/MalwareAnalyzer"#' /usr/local/lib/python3.6/dist-packages/apkid/rules.py && \
     cd .. && \
     rm -fr APKiD
 
