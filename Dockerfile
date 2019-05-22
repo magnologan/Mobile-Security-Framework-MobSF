@@ -30,13 +30,12 @@ RUN apt update -y && apt install -y \
 RUN locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
-#Install Oracle JDK11 LTS
-RUN apt install -y software-properties-common && \
-    add-apt-repository ppa:linuxuprising/java -y && \
-    apt update && \
-    echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | /usr/bin/debconf-set-selections && \
-    apt install -y oracle-java11-installer
-
+#Install OpenJDK
+RUN  \
+     apt install -y \
+     software-properties-common \
+     default-jdk
+    
 #Install Python 3
 RUN \
     apt install -y \
